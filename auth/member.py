@@ -20,9 +20,7 @@ class Member(object):
             print(i.get_member())
     @staticmethod
     def del_member(ls, id):
-        for i, j in enumerate(ls):
-            if j.id == id:
-                del ls[i]
+        del ls[[i for i, j in enumerate(ls) if j.id == id][0]]
     @staticmethod
     def main():
         ls = []
