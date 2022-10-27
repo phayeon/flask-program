@@ -1,6 +1,7 @@
 import pandas as pd
 from util.dataset import Dataset
 
+
 # ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',
 #        'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked']
 # Age            177
@@ -8,7 +9,6 @@ from util.dataset import Dataset
 # Embarked         2
 
 class TitanicModel(object):
-
     dataset = Dataset()
 
     def __init__(self):
@@ -36,7 +36,15 @@ class TitanicModel(object):
 
     @staticmethod
     def creat_train(this) -> object:
-        Dataset.train
+        return this.train.drop('Survived', axis=1)
 
-    def creat_label(self):
-        pass
+    @staticmethod
+    def creat_label(this) -> object:
+        return this.train['Survived']
+
+    @staticmethod
+    def drop_features(this, *feature):
+        for i in feature:
+            this.train = this.train.drop(i, axis=1)
+            this.test = this.test.drop(i, axis=1)
+        return this
