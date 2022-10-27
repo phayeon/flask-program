@@ -1,3 +1,5 @@
+import pandas as pd
+
 from util.dataset import Dataset
 
 
@@ -9,13 +11,20 @@ class BicycleModel(object):
         pass
 
     def __str__(self):
-        pass
+        a = self.new_model('train.csv')
+        return f" Train Type : {type(a)}\n" \
+               f" Train columns : {a.columns}\n" \
+               f" Train head : {a.head()}\n" \
+               f" Train null의 개수 : {a.isnull().sum()}"
 
     def process(self):
         pass
 
-    def new_model(self):
-        pass
+    def new_model(self, fname):
+        this = self.dataset
+        this.context = './data/'
+        this.fname = fname
+        return pd.read_csv(this.context + this.fname)
 
     def creat_train(self):
         pass
