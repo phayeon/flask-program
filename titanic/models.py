@@ -81,9 +81,9 @@ class TitanicModel(object):
 
     @staticmethod
     def sex_Nominal(this) -> object:  # female → 1, male → 0
-        gender_mapping = {'male': 0, 'female': 1}
+        # gender_mapping = {'male': 0, 'female': 1}
         for i in [this.train, this.test]:
-            i['Gender'] = i['Sex'].map(gender_mapping)  # Gender 칼럼에 생성 → 0, 1 로 대체
+            i['Gender'] = i['Sex'].map({'male': 0, 'female': 1})  # Gender 칼럼에 생성 → 0, 1 로 대체
         return this
 
     @staticmethod
@@ -92,10 +92,16 @@ class TitanicModel(object):
 
     @staticmethod
     def fare_Ordinal(this) -> object:  # 가격 싼표, 일반표, 비싼표
+        for i in [this.train, this.test]:
+            i['FareBand'] = pd.qcut(i['Fare'], 4, ["0", "1", "2", "3"])
         return this
 
     @staticmethod
     def embarked_Nominal(this) -> object:  # 승선 항구 S, C, Q
+        this.train = this.train.fillna({'Embarked': 'S'})
+        this.test = this.train.fillna({'Embarked': 'S'})  # fillna → null 값을 임시 값을 S로 채운다.(수가 적을 때 사용 가능)
+        for i in [this.train, this.test]:
+            i['Embarked'] = i['Embarked'].map({"S": 1, "C": 2, "Q": 3})
         return this
 
 
@@ -104,5 +110,7 @@ if __name__ == '__main__':
     this = Dataset()
     this.train = t.new_model('train.csv')
     this.test = t.new_model('test.csv')
-    this = TitanicModel.sex_Nominal(this)
-    print(this.train['Gender'])
+    this = TitanicModel.embarked_Nominal(this)
+    print(this.train.columns)
+    print(this.train.head(3))   # 위부터 3줄
+    print(this.train.tail(3))   # 아래부터 3줄
