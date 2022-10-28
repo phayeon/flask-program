@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from util.dataset import Dataset
 
@@ -26,27 +27,14 @@ class TitanicModel(object):
 
     def __str__(self):
         a = self.new_model(self.dataset.fname())
-        '''
-        b = 'train.csv'
-        a = self.new_model(b)
-        '''
         return f' Train Type : {type(a)}\n' \
                f' Train columns : {a.columns}\n' \
                f' Train head : {a.head()}\n' \
                f' Train null의 개수 : {a.isnull().sum()}\n'
 
-    '''
-    def mining(self): # 작업 순서 개념만 확인
-        pass
-    '''
-
     def preprocess(self):
         pass
 
-    '''
-    def postprocess(self) # 작업 순서 개념만 확인
-        pass
-    '''
 
     def new_model(self, fname) -> object:
         this = self.dataset
@@ -69,37 +57,34 @@ class TitanicModel(object):
             this.test = this.test.drop(i, axis=1)
         return this
 
-    '''
     @staticmethod
-    def pclass_Ordinal(this) -> object: # 1등칸, 2등칸, 3등칸
-        train = this.train
-        print(train['PassengerId'])
-        return this
-        
-        편집 불필요 → 삭제 / 데이터 자체가 이미 오디널.
-    '''
-
-    @staticmethod
-    def sex_Nominal(this) -> object:  # female → 1, male → 0
-        # gender_mapping = {'male': 0, 'female': 1}
+    def sex_Nominal(this) -> object:
         for i in [this.train, this.test]:
-            i['Gender'] = i['Sex'].map({'male': 0, 'female': 1})  # Gender 칼럼에 생성 → 0, 1 로 대체
+            i['Gender'] = i['Sex'].map({'male': 0, 'female': 1})
         return this
 
     @staticmethod
-    def age_Ordinal(this) -> object:  # 연령대 10대, 20대 등
+    def age_Ordinal(this) -> object:
+        for i in [this.train, this.test]:
+            i['Age'] = i['Age'].fillna(-0.5)
+        bins = [-1, 0, 5, 12, 18, 24, 35, 68, np.inf]
+        labels = ['Unknown', 'Baby', 'Child', 'Teenager', 'Student', 'Young Adult', 'Adult', 'Senior']
+        age_mapping = {'Unknown': 0, 'Baby': 1, 'Child': 2, 'Teenager': 3, 'Student': 4, 'Young Adult': 5, 'Adult': 6, 'Senior': 7}
+        for i in [this.train, this.test]:
+            i['AgeGroup'] = pd.cut(i['Age'], bins=bins, labels=labels)
+            i['AgeGroup'] = i['AgeGroup'].map(age_mapping)
         return this
 
     @staticmethod
-    def fare_Ordinal(this) -> object:  # 가격 싼표, 일반표, 비싼표
+    def fare_Ordinal(this) -> object:
         for i in [this.train, this.test]:
             i['FareBand'] = pd.qcut(i['Fare'], 4, ["0", "1", "2", "3"])
         return this
 
     @staticmethod
-    def embarked_Nominal(this) -> object:  # 승선 항구 S, C, Q
+    def embarked_Nominal(this) -> object:
         this.train = this.train.fillna({'Embarked': 'S'})
-        this.test = this.train.fillna({'Embarked': 'S'})  # fillna → null 값을 임시 값을 S로 채운다.(수가 적을 때 사용 가능)
+        this.test = this.train.fillna({'Embarked': 'S'})
         for i in [this.train, this.test]:
             i['Embarked'] = i['Embarked'].map({"S": 1, "C": 2, "Q": 3})
         return this
@@ -110,7 +95,7 @@ if __name__ == '__main__':
     this = Dataset()
     this.train = t.new_model('train.csv')
     this.test = t.new_model('test.csv')
-    this = TitanicModel.embarked_Nominal(this)
+    this = TitanicModel.age_Ordinal(this)
     print(this.train.columns)
-    print(this.train.head(3))   # 위부터 3줄
-    print(this.train.tail(3))   # 아래부터 3줄
+    print(this.train.head(3))
+    print(this.train.tail(3))
