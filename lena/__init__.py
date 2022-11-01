@@ -1,3 +1,7 @@
+import cv2
+from matplotlib import pyplot as plt
+
+from lena.models import CannyModel
 from lena.views import LennaController
 from util.common import Common
 
@@ -26,19 +30,20 @@ if __name__ == '__main__':
     api = LennaController()
 
     while True:
-        menu = Common.menu(["종료", "원본보기", "모델링", "머신러닝", "배포"])
+        menu = Common.menu(["종료", "원본보기", "엣지검출", "엣지검출", "배포"])
         if menu == "0":
             break
         elif menu == "1":
-            print("### 시각화 ###")
-            print(api.modeling('Lenna.png'))
+            print("### 원본보기 ###")
+            api.modeling("https://upload.wikimedia.org/wikipedia/ko/2/24/Lenna.png")
 
         elif menu == "2":
-            print("### 모델링 ###")
-            pass
+            print("### 엣지검출 ###")
+            api.Canny_modeling("https://docs.opencv.org/4.x/roi.jpg")
+
         elif menu == "3":
-            print("### 머신러닝 ###")
-            pass
+            print("### 엣지검출 ###")
+
         elif menu == "4":
             print("### 배포 ###")
             pass
