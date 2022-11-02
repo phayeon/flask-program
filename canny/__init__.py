@@ -1,8 +1,4 @@
-import cv2
-from matplotlib import pyplot as plt
-
-from lena.models import CannyModel
-from lena.views import LennaController
+from canny.views import MenuController
 from util.common import Common
 
 '''
@@ -25,27 +21,24 @@ cv2.destroyAllWindows() : 화면에 나타난 윈도우를 종료합니다. 일�
 
 '''
 
+LENNA = "Lenna.png"
+SOCCER = "https://www.charlezz.com/wordpress/wp-content/uploads/2021/06/www.charlezz.com-opencv-building.jpg"
+
 if __name__ == '__main__':
-
-    api = LennaController()
-
+    api = MenuController
     while True:
-        menu = Common.menu(["종료", "원본보기", "엣지검출", "엣지검출", "배포"])
+        menus = ["종료", "원본보기", "그레이스케일", "엣지검출", "직선검출"]
+        menu = Common.menu(menus)
         if menu == "0":
+            api.Menu_0(menus[0])
             break
         elif menu == "1":
-            print("### 원본보기 ###")
-            api.modeling("https://upload.wikimedia.org/wikipedia/ko/2/24/Lenna.png")
-
+            api.Menu_1(menus[1], LENNA)
         elif menu == "2":
-            print("### 엣지검출 ###")
-            api.Canny_modeling("https://docs.opencv.org/4.x/roi.jpg")
-
+            api.Menu_2(menus[2], SOCCER)
         elif menu == "3":
-            print("### 엣지검출 ###")
-
+            api.Menu_3(menus[3], SOCCER)
         elif menu == "4":
-            print("### 배포 ###")
-            pass
+            api.Menu_4(menus[4], SOCCER)
         else:
             print("다시 입력 해 주세요.")
