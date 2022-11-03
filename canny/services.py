@@ -22,10 +22,6 @@ def ImageToNumberArray(url):
     return np.array(Image.open(BytesIO(res.content)))
 
 
-def ImageRead(img):
-    return (lambda x: cv.imread('./data/' + x))(img)
-
-
 def GaussianBlur(src, sigmax, sigmay):
     # 가로 커널과 세로 커널 행렬을 생성
     i = np.arange(-4 * sigmax, 4 * sigmax + 1)
@@ -182,6 +178,35 @@ def filter2D(src, kernel, delta=0):
     return dst
 
 
+def ExecuteLambda(*params):
+    cmd = params[0]
+    target = params[1]
+    if cmd == 'IMG_READ':
+        return (lambda x: cv.imread(f'{dataset.context}{x}'))(target)
+    elif cmd == 'IMG_READ_PLT':
+        return (lambda x: cv.cvtColor(cv.imread(f'{dataset.context}{x}'), cv.COLOR_BGR2RGB))(target)
+    elif cmd == 'GRAY_SCALE':
+        return (lambda x: x[:, :, 0] * 0.114 + x[:, :, 1] * 0.587 + x[:, :, 2] * 0.229)(target)
+    elif cmd == 'FROM_ARRAY':
+        return (lambda x: Image.fromarray(x))(target)
+
+
+def Hough(edges):
+    lines = cv.HoughLinesP(edges, 0.8, np.pi / 150., 90, minLineLength=10, maxLineGap=100)
+    dst = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
+    for i in lines:
+        cv.line(dst, (int(i[0][0]), int(i[0][1])), (int(i[0][2]), int(i[0][3])), (0, 255, 0), 2)
+    return dst
+
+def HaarLine(*params):
+    filter = params[0].detectMultiScale(params[1], minSize=(150, 150))
+    if len(filter) == 0:
+        print("얼굴인식 실패")
+        quit()
+    for (x, y, w, h) in filter:
+        print(f'얼굴의 좌표 : {x}, {y}, {w}, {h}')
+        red = (0, 0, 255)
+        cv.rectangle(params[1], (x, y), (x + w, y + h), red, thickness=20)
 
 
 '''

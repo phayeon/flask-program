@@ -22,12 +22,22 @@ cv2.destroyAllWindows() : 화면에 나타난 윈도우를 종료합니다. 일�
 '''
 
 LENNA = "Lenna.png"
-SOCCER = "https://www.charlezz.com/wordpress/wp-content/uploads/2021/06/www.charlezz.com-opencv-building.jpg"
+SOCCER = "https://docs.opencv.org/4.x/roi.jpg"
+BUILDING = "https://www.charlezz.com/wordpress/wp-content/uploads/2021/06/www.charlezz.com-opencv-building.jpg"
+HAAR = "haarcascade_frontalface_alt.xml"
+GIRL = "girl.jpg"
+GIRL_LICLINED = "girl_licliend.png"
+GIRL_SIDE_FACE = "girl_side_face.jpg"
+GIRL_WITH_MOM = "girl_with_mom.jpg"
+FACE_TARGET = ""
+FACE_OBJECT = ""
+CAT = "cat.jpg"
+
 
 if __name__ == '__main__':
     api = MenuController
     while True:
-        menus = ["종료", "원본보기", "그레이스케일", "엣지검출", "직선검출"]
+        menus = ["종료", "원본보기", "그레이스케일", "엣지검출", "직선검출", "얼굴인식", "모자이크", "얼굴추출"]
         menu = Common.menu(menus)
         if menu == "0":
             api.Menu_0(menus[0])
@@ -39,6 +49,12 @@ if __name__ == '__main__':
         elif menu == "3":
             api.Menu_3(menus[3], SOCCER)
         elif menu == "4":
-            api.Menu_4(menus[4], SOCCER)
+            api.Menu_4(menus[4], BUILDING)
+        elif menu == "5":
+            api.Menu_5(menus[5], HAAR, GIRL)
+        elif menu == "6":
+            api.Menu_6(menus[6], CAT)
+        elif menu == "7":
+            api.Menu_7(menus[7], HAAR, GIRL)
         else:
             print("다시 입력 해 주세요.")
