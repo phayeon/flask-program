@@ -20,7 +20,7 @@ class MenuController(object):
         print(f'cv2 버전 {cv.__version__}')
         print(f'Shape is {img.shape}')
         plt.subplot(111), plt.imshow(img, cmap='gray')
-        plt.title('Original Image'), plt.xticks([]), plt.yticks([])
+        plt.title('Original'), plt.xticks([]), plt.yticks([])
         plt.show()
 
     @staticmethod
@@ -45,22 +45,21 @@ class MenuController(object):
         # img = Canny(img, 50, 150) cv.Canny() 를 사용하지 않는 경우 필요
         edges = cv.Canny(img, 100, 200)
         plt.subplot(121), plt.imshow(img, cmap='gray')
-        plt.title('Original Image'), plt.xticks([]), plt.yticks([])
+        plt.title('Original'), plt.xticks([]), plt.yticks([])
         plt.subplot(122), plt.imshow(edges, cmap='gray')
-        plt.title('Edge Image'), plt.xticks([170]), plt.yticks([200])
+        plt.title('Edge'), plt.xticks([170]), plt.yticks([200])
         plt.show()
 
     @staticmethod
     def Menu_4(*params):
         print(params[0])
         img = model.ImageToNumberArray(params[1])
-        edges = cv.Canny(img, 190, 200)
-        dst = model.Hough(edges)
+        dst = model.Hough(cv.Canny(img, 190, 200))
 
         plt.subplot(121), plt.imshow(img, cmap='gray')
-        plt.title('Original Image'), plt.xticks([]), plt.yticks([])
+        plt.title('Original'), plt.xticks([]), plt.yticks([])
         plt.subplot(122), plt.imshow(dst, cmap='gray')
-        plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
+        plt.title('Hough'), plt.xticks([]), plt.yticks([])
         plt.show()
 
     @staticmethod
@@ -69,12 +68,10 @@ class MenuController(object):
         plt_cat = lam.Mosaic('IMG_READ_PLT', params[1])
         mos = model.OneMosaic(plt_cat, (150, 150, 450, 450), 10)
 
-        cv.imwrite(f'{ds().context}cat-mosaic.png', cv.cvtColor(mos, cv.COLOR_BGR2RGB))
-
         plt.subplot(121), plt.imshow(plt_cat, cmap='gray')
-        plt.title('Gray Image'), plt.xticks([]), plt.yticks([])
+        plt.title('Original'), plt.xticks([]), plt.yticks([])
         plt.subplot(122), plt.imshow(mos, cmap='gray')
-        plt.title('Gray Image'), plt.xticks([]), plt.yticks([])
+        plt.title('Mosaic'), plt.xticks([]), plt.yticks([])
         plt.show()
 
     @staticmethod
@@ -109,25 +106,12 @@ class MenuController(object):
     def Menu_7(*params):
         print(params[0])
         img = lam.Mosaic('IMG_READ_PLT', params[1])
-        img_copy = copy.deepcopy(img)
-        gray = lam.Mosaic('GRAY_SCALE', img)
-        edges = cv.Canny(img, 50, 51)
-        hough = model.Hough(edges)
         mos = model.IMGMosaic(img, 10)
-        model.HaarLine(img)
 
         cv.imwrite(f'{ds().context}family-mosaic.png', cv.cvtColor(mos, cv.COLOR_BGR2RGB))
 
-        plt.subplot(231), plt.imshow(img_copy, cmap='gray')
-        plt.title('Original'), plt.xticks([]), plt.yticks([])
-        plt.subplot(232), plt.imshow(gray, cmap='gray')
-        plt.title('Gray'), plt.xticks([]), plt.yticks([])
-        plt.subplot(233), plt.imshow(edges, cmap='gray')
-        plt.title('Edge'), plt.xticks([]), plt.yticks([])
-        plt.subplot(234), plt.imshow(hough, cmap='gray')
-        plt.title('Hough'), plt.xticks([]), plt.yticks([])
-        plt.subplot(235), plt.imshow(mos, cmap='gray')
-        plt.title('Mosaic'), plt.xticks([]), plt.yticks([])
-        plt.subplot(236), plt.imshow(img, cmap='gray')
+        plt.subplot(121), plt.imshow(img, cmap='gray')
         plt.title('Haar'), plt.xticks([]), plt.yticks([])
+        plt.subplot(122), plt.imshow(mos, cmap='gray')
+        plt.title('Mosaic'), plt.xticks([]), plt.yticks([])
         plt.show()
