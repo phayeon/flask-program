@@ -1,4 +1,4 @@
-from canny.views import MenuController
+from mosaic.views import MenuController
 from util.common import Common
 
 '''
@@ -24,7 +24,6 @@ cv2.destroyAllWindows() : 화면에 나타난 윈도우를 종료합니다. 일�
 LENNA = "Lenna.png"
 SOCCER = "https://docs.opencv.org/4.x/roi.jpg"
 BUILDING = "https://www.charlezz.com/wordpress/wp-content/uploads/2021/06/www.charlezz.com-opencv-building.jpg"
-HAAR = "haarcascade_frontalface_alt.xml"
 GIRL = "girl.jpg"
 GIRL_LICLINED = "girl_licliend.png"
 GIRL_SIDE_FACE = "girl_side_face.jpg"
@@ -37,7 +36,7 @@ CAT = "cat.jpg"
 if __name__ == '__main__':
     api = MenuController
     while True:
-        menus = ["종료", "원본보기", "그레이스케일", "엣지검출", "직선검출", "얼굴인식", "모자이크", "얼굴추출"]
+        menus = ["종료", "원본보기", "그레이스케일", "엣지검출", "직선검출", "모자이크", "소녀 모자이크", "모녀 모자이크"]
         menu = Common.menu(menus)
         if menu == "0":
             api.Menu_0(menus[0])
@@ -51,10 +50,10 @@ if __name__ == '__main__':
         elif menu == "4":
             api.Menu_4(menus[4], BUILDING)
         elif menu == "5":
-            api.Menu_5(menus[5], HAAR, GIRL)
+            api.Menu_5(menus[5], CAT)
         elif menu == "6":
-            api.Menu_6(menus[6], CAT)
+            api.Menu_6(menus[6], GIRL)
         elif menu == "7":
-            api.Menu_7(menus[7], HAAR, GIRL)
+            api.Menu_7(menus[7], GIRL_WITH_MOM)
         else:
             print("다시 입력 해 주세요.")

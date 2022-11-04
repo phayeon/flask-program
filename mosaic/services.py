@@ -1,3 +1,4 @@
+import copy
 from io import BytesIO
 import cv2 as cv
 import numpy as np
@@ -5,6 +6,8 @@ import requests
 from PIL import Image
 from const.crawler import HEADERS
 from util.dataset import Dataset
+from const.path import HAAR
+
 import matplotlib.pyplot as plt
 
 ### 디스크에서 읽는 경우 ###
@@ -22,17 +25,8 @@ def ImageToNumberArray(url):
     return np.array(Image.open(BytesIO(res.content)))
 
 
-def GaussianBlur(src, sigmax, sigmay):
-    # 가로 커널과 세로 커널 행렬을 생성
-    i = np.arange(-4 * sigmax, 4 * sigmax + 1)
-    j = np.arange(-4 * sigmay, 4 * sigmay + 1)
-    # 가우시안 계산
-    mask = np.exp(-(i ** 2 / (2 * sigmax ** 2))) / (np.sqrt(2 * np.pi) * sigmax)
-    maskT = np.exp(-(j ** 2 / (2 * sigmay ** 2))) / (np.sqrt(2 * np.pi) * sigmay)
-    mask = mask[:, np.newaxis]
-    maskT = maskT[:, np.newaxis].T
-    return filter2D(filter2D(src, mask), maskT)  # 두 번 필터링
-
+'''
+cv.Canny가 있어서 사용하지 않음, 참고용
 
 def Canny(src, lowThreshold, highThreshold):
     Kx = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])  # x축 소벨 행렬로 미분
@@ -113,6 +107,18 @@ def Canny(src, lowThreshold, highThreshold):
                 except IndexError as e:
                     pass
     return img
+    
+
+def GaussianBlur(src, sigmax, sigmay):
+    # 가로 커널과 세로 커널 행렬을 생성
+    i = np.arange(-4 * sigmax, 4 * sigmax + 1)
+    j = np.arange(-4 * sigmay, 4 * sigmay + 1)
+    # 가우시안 계산
+    mask = np.exp(-(i ** 2 / (2 * sigmax ** 2))) / (np.sqrt(2 * np.pi) * sigmax)
+    maskT = np.exp(-(j ** 2 / (2 * sigmay ** 2))) / (np.sqrt(2 * np.pi) * sigmay)
+    mask = mask[:, np.newaxis]
+    maskT = maskT[:, np.newaxis].T
+    return filter2D(filter2D(src, mask), maskT)  # 두 번 필터링
 
 
 def edge_tracking(self, src, adaptiveMethod, blocksize, thresholdType, C):
@@ -176,19 +182,8 @@ def filter2D(src, kernel, delta=0):
             # 필터링 연산
             dst[x, y] = (kernel * cornerPixel[x: x + kernel.shape[0], y: y + kernel.shape[1]]).sum() + delta
     return dst
-
-
-def ExecuteLambda(*params):
-    cmd = params[0]
-    target = params[1]
-    if cmd == 'IMG_READ':
-        return (lambda x: cv.imread(f'{dataset.context}{x}'))(target)
-    elif cmd == 'IMG_READ_PLT':
-        return (lambda x: cv.cvtColor(cv.imread(f'{dataset.context}{x}'), cv.COLOR_BGR2RGB))(target)
-    elif cmd == 'GRAY_SCALE':
-        return (lambda x: x[:, :, 0] * 0.114 + x[:, :, 1] * 0.587 + x[:, :, 2] * 0.229)(target)
-    elif cmd == 'FROM_ARRAY':
-        return (lambda x: Image.fromarray(x))(target)
+    
+'''
 
 
 def Hough(edges):
@@ -198,15 +193,44 @@ def Hough(edges):
         cv.line(dst, (int(i[0][0]), int(i[0][1])), (int(i[0][2]), int(i[0][3])), (0, 255, 0), 2)
     return dst
 
+
 def HaarLine(*params):
-    filter = params[0].detectMultiScale(params[1], minSize=(150, 150))
+    haar = cv.CascadeClassifier(f'{Dataset().context}{HAAR}')
+    filter = haar.detectMultiScale(params[0], minSize=(150, 150))
     if len(filter) == 0:
         print("얼굴인식 실패")
         quit()
     for (x, y, w, h) in filter:
-        print(f'얼굴의 좌표 : {x}, {y}, {w}, {h}')
         red = (0, 0, 255)
-        cv.rectangle(params[1], (x, y), (x + w, y + h), red, thickness=20)
+        cv.rectangle(params[0], (x, y), (x + w, y + h), red, thickness=20)
+    return x, y, w+x, y+h
+
+def OneMosaic(*params):
+    one_copy = params[0].copy()
+    rect = params[1]
+    x1, y1, x2, y2 = rect
+    w = x2 - x1
+    h = y2 - y1
+    i_rect = one_copy[y1:y2, x1:x2]
+    i_small = cv.resize(i_rect, (params[2], params[2]))
+    i_mos = cv.resize(i_small, (w, h), interpolation=cv.INTER_AREA)
+    one_copy[y1:y2, x1:x2] = i_mos
+    return one_copy
+def IMGMosaic(*params):
+    haar = cv.CascadeClassifier(f'{Dataset().context}{HAAR}')
+    filter = haar.detectMultiScale(params[0], minSize=(150, 150))
+    if len(filter) == 0:
+        print("얼굴인식 실패")
+        quit()
+    mosaic_copy = copy.deepcopy(params[0])
+    for (x, y, w, h) in filter:
+        x1, y1, x2, y2 = x, y, w+x, y+h
+        i_rect = mosaic_copy[y1:y2, x1:x2]
+        i_small = cv.resize(i_rect, (params[1], params[1]))
+        i_mos = cv.resize(i_small, (w, h), interpolation=cv.INTER_AREA)
+        mosaic_copy[y1:y2, x1:x2] = i_mos
+    return mosaic_copy
+
 
 
 '''
@@ -225,7 +249,4 @@ def gray_scale(img):
 '''
 
 if __name__ == '__main__':
-    url = "https://docs.opencv.org/4.x/roi.jpg"
-    img = (lambda x: x[:, :, 0] * 0.114 + x[:, :, 1] * 0.587 + x[:, :, 2] * 0.229)(ImageToNumberArray(url))
-    plt.imshow(Image.fromarray(Canny(GaussianBlur(img, 1, 1), 50, 150)))
-    plt.show()
+    pass
