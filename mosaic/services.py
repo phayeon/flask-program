@@ -189,8 +189,7 @@ def filter2D(src, kernel, delta=0):
 def Hough(edges):
     lines = cv.HoughLinesP(edges, 0.8, np.pi / 150., 90, minLineLength=10, maxLineGap=100)
     dst = cv.cvtColor(edges, cv.COLOR_GRAY2BGR)
-    for i in lines:
-        cv.line(dst, (int(i[0][0]), int(i[0][1])), (int(i[0][2]), int(i[0][3])), (0, 255, 0), 2)
+    [cv.line(dst, (int(i[0][0]), int(i[0][1])), (int(i[0][2]), int(i[0][3])), (0, 255, 0), 2) for i in lines]
     return dst
 
 
@@ -201,14 +200,13 @@ def HaarLine(*params):
         print("얼굴인식 실패")
         quit()
     for (x, y, w, h) in filter:
-        red = (0, 0, 255)
-        cv.rectangle(params[0], (x, y), (x + w, y + h), red, thickness=20)
-    return x, y, w+x, y+h
+        cv.rectangle(params[0], (x, y), (x + w, y + h), (0, 0, 255), thickness=20)
+    return x, y, w + x, y + h
+
 
 def OneMosaic(*params):
     one_copy = params[0].copy()
-    rect = params[1]
-    x1, y1, x2, y2 = rect
+    x1, y1, x2, y2 = params[1]
     w = x2 - x1
     h = y2 - y1
     i_rect = one_copy[y1:y2, x1:x2]
@@ -216,6 +214,8 @@ def OneMosaic(*params):
     i_mos = cv.resize(i_small, (w, h), interpolation=cv.INTER_AREA)
     one_copy[y1:y2, x1:x2] = i_mos
     return one_copy
+
+
 def IMGMosaic(*params):
     haar = cv.CascadeClassifier(f'{Dataset().context}{HAAR}')
     filter = haar.detectMultiScale(params[0], minSize=(150, 150))
@@ -224,13 +224,12 @@ def IMGMosaic(*params):
         quit()
     mosaic_copy = copy.deepcopy(params[0])
     for (x, y, w, h) in filter:
-        x1, y1, x2, y2 = x, y, w+x, y+h
+        x1, y1, x2, y2 = x, y, w + x, y + h
         i_rect = mosaic_copy[y1:y2, x1:x2]
         i_small = cv.resize(i_rect, (params[1], params[1]))
         i_mos = cv.resize(i_small, (w, h), interpolation=cv.INTER_AREA)
         mosaic_copy[y1:y2, x1:x2] = i_mos
     return mosaic_copy
-
 
 
 '''
