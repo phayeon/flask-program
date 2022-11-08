@@ -1,26 +1,30 @@
-from scrapper.domains import MusicRanking
-from util.common import Common
+from scrapper.domains import Scrap
 from scrapper.views import ScrapController
+from util.common import Common
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    scrap = Scrap()
     api = ScrapController
+
     while True:
-        menus = ["종료", "Bugs", "Melon", "삭제"]
+        menus = ['종료', 'Bugs', 'Melon']
         menu = Common.menu(menus)
-        m = MusicRanking()
         if menu == "0":
-            api.menu_0(menus[0])
+            api.Menu_0(menus[0])
             break
         elif menu == "1":
-            m.domain = 'https://music.bugs.co.kr/chart/track/day/total?chartdate='
-            m.query_string = '20221105'
-            m.parser = 'lxml'
-            m.class_names = ["title", "artist"]
-            m.tag_name = 'p'
-            api.menu_1(m)
+            scrap.domain = "https://music.bugs.co.kr/chart/track/day/total?chartdate="
+            scrap.query_string = "20221101"
+            scrap.parser = "lxml"
+            scrap.class_names = ["title", "artist"]
+            scrap.tag_name = "p"
+            api.Menu_1(menus[1], scrap)
         elif menu == "2":
-            api.menu_2(menus[2], 'https://www.melon.com/chart/index.htm')
-        elif menu == "3":
-            api.menu_3(menus[3])
+            scrap.domain = "https://www.melon.com/chart/index.htm?dayTime="
+            scrap.query_string = "2022110810"
+            scrap.parser = "lxml"
+            scrap.class_names = ["ellipsis rank01", "ellipsis rank02"]
+            scrap.tag_name = "div"
+            api.Menu_2(menus[2], scrap)
         else:
             print("다시 입력 해 주세요.")
