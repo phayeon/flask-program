@@ -21,14 +21,13 @@ class Fruits(object):
 
     @staticmethod
     def print_fruits(ls):
-        dc = {}
-        ls0 = ['제품','가격', '판매량']
+        ls0 = ['제품', '가격', '판매량']
         ls1 = ['사과', '딸기', '바나나']
         ls2 = [1000, 5000, 1000]
         ls3 = [30, 40, 50]
         ls = [ls1, ls2, ls3]
         dc = pd.DataFrame(
-            {j : ls[i] for i, j in enumerate(ls0)})
+            {j: ls[i] for i, j in enumerate(ls0)})
         '''
         for i, j in enumerate(ls0):
             dc[j] = ls[i]
