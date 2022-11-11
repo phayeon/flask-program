@@ -1,4 +1,6 @@
+import numpy as np
 import pandas as pd
+from string import ascii_lowercase
 from util.common import Common
 
 
@@ -6,11 +8,6 @@ class Fruits(object):
     def __init__(self, fruits, price):
         self.fruits = fruits
         self.price = price
-
-    @staticmethod
-    def get_menu():
-        print("1.상품 등록\n2.상품 확인\n3.상품 삭제\n4.작업 종료")
-        return int(input("작업 선택 : "))
 
     @staticmethod
     def get_fruits():
@@ -34,8 +31,8 @@ class Fruits(object):
         print(pd.DataFrame.from_dict(dc))
         '''
         print(dc)
-        print('가격 평균 : '+str(int(dc['가격'].mean())))
-        print('판매량 평균 : '+str(int(dc['판매량'].mean())))
+        print('가격 평균 : ' + str(int(dc['가격'].mean())))
+        print('판매량 평균 : ' + str(int(dc['판매량'].mean())))
 
         '''print("과일 : 가격")
         [print(i) for i in ls]'''
@@ -45,10 +42,22 @@ class Fruits(object):
         del ls[[i for i, j in enumerate(ls) if j.fruits == fruits][0]]
 
     @staticmethod
+    def my_list(a, b):
+        return list(range(a, b))
+
+    @staticmethod
+    def num2d():
+        df = pd.DataFrame(np.array([(Fruits.my_list(1, 11)),
+                                    Fruits.my_list(11, 21),
+                                    Fruits.my_list(21, 31)]),
+                          columns=[list(ascii_lowercase)[0:10]])
+        print(df.head())
+
+    @staticmethod
     def main():
         ls = []
         while True:
-            manus = ['종료', '추가', '확인', '삭제']
+            manus = ['종료', '추가', '확인', '삭제', '숫자2D']
             menu = Common.menu(manus)
             if menu == '0':
                 print("작업을 종료합니다.")
@@ -59,6 +68,8 @@ class Fruits(object):
                 Fruits.print_fruits(ls)
             elif menu == '3':
                 Fruits.del_fruits(ls, input("삭제 할 과일 : "))
+            elif menu == '4':
+                Fruits.num2d()
             else:
                 print("다시 입력해 주세요.")
 
