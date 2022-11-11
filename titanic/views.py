@@ -35,8 +35,10 @@ class TitanicController(object):
         this.train = model.creat_train(this)
         return this
 
-    def learning(self):
-        pass
+    def learning(self, train, test):
+        this = self.modeling(train, test)
+        accuracy = self.model.get_accuracy((this))
+        print(f'사이킷런 알고리즘 정확도 : {accuracy} %')
 
     def submit(self):
         pass
