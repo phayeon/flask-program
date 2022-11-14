@@ -4,6 +4,8 @@ from util.dataset import Dataset
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LogisticRegression
 
 '''
 ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp',
@@ -118,7 +120,7 @@ class TitanicModel(object):
         return KFold(n_splits=10, shuffle=True, random_state=0)
 
     @staticmethod
-    def get_accuracy(this):
+    def get_accuracy1(this):
         score = cross_val_score(RandomForestClassifier(),
                                 this.train,
                                 this.label,
@@ -126,6 +128,26 @@ class TitanicModel(object):
                                 n_jobs=1,
                                 scoring='accuracy')
         return round(np.mean(score)*100,2)
+
+    @staticmethod
+    def get_accuracy2(this):
+        score = cross_val_score(DecisionTreeClassifier(),
+                                this.train,
+                                this.label,
+                                cv=TitanicModel.creat_k_fold(),
+                                n_jobs=1,
+                                scoring='accuracy')
+        return round(np.mean(score) * 100, 2)
+    @staticmethod
+    def get_accuracy3(this):
+        score = cross_val_score(LogisticRegression(),
+                                this.train,
+                                this.label,
+                                cv=TitanicModel.creat_k_fold(),
+                                n_jobs=1,
+                                scoring='accuracy')
+        return round(np.mean(score) * 100, 2)
+
 
 
 if __name__ == '__main__':

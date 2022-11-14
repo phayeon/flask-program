@@ -37,8 +37,12 @@ class TitanicController(object):
 
     def learning(self, train, test):
         this = self.modeling(train, test)
-        accuracy = self.model.get_accuracy((this))
-        print(f'사이킷런 알고리즘 정확도 : {accuracy} %')
+        accuracy1 = self.model.get_accuracy1((this))
+        accuracy2 = self.model.get_accuracy2((this))
+        accuracy3 = self.model.get_accuracy3((this))
+        print(f'랜덤 포레스트 알고리즘 정확도 : {accuracy1} %')
+        print(f'결정 트리 알고리즘 정확도 : {accuracy2} %')
+        print(f'로지스틱 회귀 정확도 : {accuracy3} %')
 
     def submit(self):
         pass

@@ -27,7 +27,10 @@ if __name__ == '__main__':
         elif menu == "3":
             print(" ### 머신러닝 ###")
             df = api.learning('train.csv', 'test.csv')
-
+            # 랜덤 포레스트 분류기 : 81.94 %
+            # 결정 트리 분류기 : ? %
+            # 로지스틱 회귀 : ? %
+            # 서포트 벡터 머신 : ? %
         elif menu == "4":
             print(" ### 배포 ###")
             df = api.submit()

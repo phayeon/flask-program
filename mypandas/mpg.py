@@ -2,9 +2,6 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
-'''
-다 칼럼명 바꾸자...
-'''
 
 my_meta = {
     "manufacturer": "회사",
@@ -53,7 +50,7 @@ def menuprint(num):
     [print(j) for i, j in enumerate(MENUS) if str(i) == num]
 
 
-class MpgController:
+class MpgService:
     def __init__(self):
         self.mpg = pd.read_csv('./data/mpg.csv')
 
@@ -120,7 +117,7 @@ class MpgController:
 
 
 if __name__ == '__main__':
-    con = MpgController()
+    con = MpgService()
     while True:
         menu = menulist()
         menuprint(menu)
