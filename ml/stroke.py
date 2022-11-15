@@ -1,13 +1,16 @@
+import copy
+from imblearn.under_sampling import RandomUnderSampler
 import pandas as pd
-from matplotlib import pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OrdinalEncoder
 
 STROKE_MENUS = ["종료",  # 0
-                "데이터 구조 파악",  # 1
-                "변수 한글화",  # 2
-                "구간 변수 편집",  # 3 18세 이상만 사용함
-                "범주형 변수 편집",  # 4
-                "시각화",  # 5
-                "모델링",  # 6
+                "데이터 구조 파악(Spec)",  # 1
+                "변수 한글화(Rename)",  # 2
+                "연속형(Interval) 변수 편집",  # 3 18세 이상만 사용함
+                "범주형(Norminal) 변수 편집",  # 4
+                "타깃(Target)",  # 5
+                "파티션(Partition)",  # 6
                 "학습",  # 7
                 "예측"]  # 8
 
@@ -27,7 +30,9 @@ stroke_menu = {
     "1": lambda x: x.spec(),
     "2": lambda x: x.rename_meta(),
     "3": lambda x: x.interval_variables(),
-    "4": lambda x: x.categorical_variables(),
+    "4": lambda x: x.norminal_variables(),
+    "5": lambda x: x.target(),
+    "6": lambda x: x.partition()
 }
 
 '''
@@ -54,7 +59,7 @@ class StrokeService:
     def __init__(self):
         self.stroke = pd.read_csv('./data/healthcare-dataset-stroke-data.csv')
         self.my_stroke = self.stroke.rename(columns=stroke_meta)
-        self.adult_stroke = self.stroke.rename(columns=stroke_meta)
+        self.adult_stroke = copy.deepcopy(self.my_stroke)
 
     '''
    1.스펙 보기
@@ -114,14 +119,65 @@ class StrokeService:
     '''
     4.범주형 = ['성별', '심장병', '기혼 여부', '직종', '거주 형태', '흡연 여부', '뇌졸중']
     '''
+    def ratio_variables(self): # 해당 칼럼이 없음
+        pass
 
-    def categorical_variables(self):
-        self.interval_variables()
+    def norminal_variables(self):
         category = ['성별', '심장병', '기혼 여부', '직종', '거주 형태', '흡연 여부', '고혈압']
         print(f'--- 범주형 변수 데이터 타입 ---\n{self.adult_stroke[category].dtypes}')
         print(f'--- 범주형 변수 결측값 ---\n{self.adult_stroke[category].isnull().sum()}')
         print(f'--- 결측 값 있는 변수 ---\n{self.adult_stroke[category].isna().any()[lambda x: x]}')
+        self.adult_stroke['성별'] = OrdinalEncoder().fit_transform(self.adult_stroke['성별'].values.reshape(-1, 1))
+        self.adult_stroke['기혼 여부'] = OrdinalEncoder().fit_transform(self.adult_stroke['기혼 여부'].values.reshape(-1, 1))
+        self.adult_stroke['직종'] = OrdinalEncoder().fit_transform(self.adult_stroke['직종'].values.reshape(-1, 1))
+        self.adult_stroke['거주 형태'] = OrdinalEncoder().fit_transform(self.adult_stroke['거주 형태'].values.reshape(-1, 1))
+        self.adult_stroke['흡연 여부'] = OrdinalEncoder().fit_transform(self.adult_stroke['흡연 여부'].values.reshape(-1, 1))
+
         self.stroke = self.adult_stroke
         self.spec()
         self.stroke.to_csv('./save/stroke.csv')
         print(" ### 프리 프로세스 종료 ### ")
+
+    def ordinal_variables(self): # 해당 칼럼이 없음
+        pass
+
+    def target(self):
+        df = pd.read_csv('./save/stroke.csv')
+        self.data = df.drop(['뇌졸중'], axis=1)
+        self.target = df['뇌졸중']
+        print(f'--- data shape --- \n {self.data}')
+        print(f'--- target shape --- \n {self.target}')
+
+    def partition(self):
+        data = self.data
+        target = self.target
+        undersample = RandomUnderSampler(sampling_strategy=0.333, random_state=2)
+        data_under, target_under = undersample.fit_resample(data, target)
+        print(target_under.value_counts(dropna=True))
+        X_train, X_test, y_train, y_test = train_test_split(data_under, target_under, test_size=0.5, random_state=42, stratify=target_under)
+
+        print("X_train shape : ", X_train.shape)
+        print("X_test shape : ", X_test.shape)
+        print("y_train shape : ", y_train.shape)
+        print("y_test shape : ", y_test.shape)
+
+
+
+
+if __name__ == '__main__':
+    def my_menu(ls):
+        for i, j in enumerate(ls):
+            print(f"{i}. {j}")
+        return input('메뉴선택: ')
+
+    t = StrokeService()
+    while True:
+        menu = my_menu(STROKE_MENUS)
+        if menu == '0':
+            print("종료")
+            break
+        else:
+            try:
+                stroke_menu[menu](t)
+            except KeyError:
+                print(" ### Error ### ")

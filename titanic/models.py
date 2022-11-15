@@ -40,7 +40,6 @@ class TitanicModel(object):
     def preprocess(self):
         pass
 
-
     def new_model(self, fname) -> object:
         this = self.dataset
         this.context = './data/'
@@ -74,7 +73,8 @@ class TitanicModel(object):
             i['Age'] = i['Age'].fillna(-0.5)
         bins = [-1, 0, 5, 12, 18, 24, 35, 68, np.inf]
         labels = ['Unknown', 'Baby', 'Child', 'Teenager', 'Student', 'Young Adult', 'Adult', 'Senior']
-        age_mapping = {'Unknown': 0, 'Baby': 1, 'Child': 2, 'Teenager': 3, 'Student': 4, 'Young Adult': 5, 'Adult': 6, 'Senior': 7}
+        age_mapping = {'Unknown': 0, 'Baby': 1, 'Child': 2, 'Teenager': 3, 'Student': 4, 'Young Adult': 5, 'Adult': 6,
+                       'Senior': 7}
         for i in [this.train, this.test]:
             i['AgeGroup'] = pd.cut(i['Age'], bins=bins, labels=labels)
             i['AgeGroup'] = i['AgeGroup'].map(age_mapping)
@@ -101,7 +101,8 @@ class TitanicModel(object):
             i['Title'] = i.Name.str.extract('([A-Za-z]+)\.', expand=False)
         for i in combine:
             i['Title'] = i['Title'].replace(['Countess', 'Lady', 'Sir'], 'Royal')
-            i['Title'] = i['Title'].replace(['Capt', 'Col', 'Don', 'Dr', 'Major', 'Rev', 'Jonkheer', 'Dona', 'Mme'], 'Rare')
+            i['Title'] = i['Title'].replace(['Capt', 'Col', 'Don', 'Dr', 'Major', 'Rev', 'Jonkheer', 'Dona', 'Mme'],
+                                            'Rare')
             i['Title'] = i['Title'].replace('Mlle', 'Mr')
             i['Title'] = i['Title'].replace('Ms', 'Miss')
             i['Title'] = i['Title'].fillna(0)
@@ -127,7 +128,7 @@ class TitanicModel(object):
                                 cv=TitanicModel.creat_k_fold(),
                                 n_jobs=1,
                                 scoring='accuracy')
-        return round(np.mean(score)*100,2)
+        return round(np.mean(score) * 100, 2)
 
     @staticmethod
     def get_accuracy2(this):
@@ -138,6 +139,7 @@ class TitanicModel(object):
                                 n_jobs=1,
                                 scoring='accuracy')
         return round(np.mean(score) * 100, 2)
+
     @staticmethod
     def get_accuracy3(this):
         score = cross_val_score(LogisticRegression(),
@@ -149,13 +151,5 @@ class TitanicModel(object):
         return round(np.mean(score) * 100, 2)
 
 
-
 if __name__ == '__main__':
-    t = TitanicModel()
-    this = Dataset()
-    this.train = t.new_model('train.csv')
-    this.test = t.new_model('test.csv')
-    this = TitanicModel.age_Ordinal(this)
-    print(this.train.columns)
-    print(this.train.head(3))
-    print(this.train.tail(3))
+    pass
