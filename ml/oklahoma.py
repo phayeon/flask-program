@@ -104,12 +104,9 @@ class OklahomaService:
     def partition(self):
         data = self.data
         target = self.target
-        undersample = RandomUnderSampler(sampling_strategy=1, random_state=2)
-        data_under, target_under = undersample.fit_resample(data, target)
-        print(target_under.value_counts(dropna=True))
         X_train, X_test, y_train, y_test = train_test_split(
-            data_under, target_under, test_size=0.5,
-            random_state=42, stratify=target_under)
+            data, target, test_size=0.5,
+            random_state=42)
 
         print("X_train shape : ", X_train.shape)
         print("X_test shape : ", X_test.shape)
