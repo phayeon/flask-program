@@ -1,3 +1,5 @@
+import cv2
+
 from src.dam.mosaic.service.views import MenuController
 from src.cmm.service.common import Common
 
@@ -21,16 +23,16 @@ cv2.destroyAllWindows() : 화면에 나타난 윈도우를 종료합니다. 일�
 
 '''
 
-LENNA = "../../../../static/data/mosaic/Lenna.png"
+LENNA = "../../../../static/data/dam/mosaic/Lenna.png"
 SOCCER = "https://docs.opencv.org/4.x/roi.jpg"
 BUILDING = "https://www.charlezz.com/wordpress/wp-content/uploads/2021/06/www.charlezz.com-opencv-building.jpg"
-GIRL = "../../../../static/data/mosaic/girl.jpg"
-GIRL_LICLINED = "../../../../static/data/mosaic/girl_licliend.png"
-GIRL_SIDE_FACE = "../../../../static/data/mosaic/girl_side_face.jpg"
-GIRL_WITH_MOM = "../../../../static/data/mosaic/girl_with_mom.jpg"
+GIRL = "../../../../static/data/dam/mosaic/girl.jpg"
+GIRL_LICLINED = "../../../../static/data/dam/mosaic/girl_licliend.png"
+GIRL_SIDE_FACE = "../../../../static/data/dam/mosaic/girl_side_face.jpg"
+GIRL_WITH_MOM = "../../../../static/data/dam/mosaic/girl_with_mom.jpg"
 FACE_TARGET = ""
 FACE_OBJECT = ""
-CAT = "../../../../static/data/mosaic/cat.jpg"
+CAT = "../../../../static/data/dam/mosaic/cat.jpg"
 
 
 if __name__ == '__main__':
